@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Great Race</title>
+    <style>
+        body {
+            background-color: #2c3e50;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        /* Updated Navigation Styles */
+        .top-nav {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            gap: 15px;
+            z-index: 100;
+        }
+        
+        .nav-button {
+            color: #ecf0f1;
+            text-decoration: none;
+            background: rgba(52, 73, 94, 0.8);
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            border: 1px solid #7f8c8d;
+        }
+        
+        .nav-button:hover {
+            background: #34495e;
+            color: #3498db;
+        }
+
+        #game-container {
+            position: relative;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            border: 4px solid #34495e;
+            border-radius: 8px;
+        }
+        canvas {
+            background-color: #27ae60;
+            display: block;
+            border-radius: 4px;
+        }
+        #ui-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.8);
+            z-index: 10;
+        }
+        .controls-hint {
+            display: flex;
+            gap: 40px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .key-box {
+            background: #ecf0f1;
+            color: #2c3e50;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        button {
+            padding: 15px 40px;
+            font-size: 24px;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.1s, background-color 0.2s;
+        }
+        button:hover {
+            background-color: #c0392b;
+            transform: scale(1.05);
+        }
+
+        /* Reset Button Style */
+        #reset-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 5px 15px;
+            font-size: 14px;
+            background-color: #95a5a6;
+            z-index: 20;
+            border: none;
+            color: white;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        #reset-btn:hover {
+            background-color: #7f8c8d;
+        }
+
+        #winner-display {
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            display: none;
+            text-shadow: 2px 2px #000;
+        }
+        #hud {
+            position: absolute;
+            top: 10px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 80px;
+            pointer-events: none;
+            font-weight: bold;
+            font-size: 18px;
+            z-index: 5;
+        }
+        .boost-indicator {
+            font-size: 12px;
+            margin-top: 4px;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-nav">
+        <a href="index.html" class="nav-button">← HOME</a>
+        <a href="scratch.html" class="nav-button">SCRATCH</a>
+    </div>
+
+    <div id="game-container">
+        <button id="reset-btn">RESET RACE</button>
+        
+        <div id="hud">
+            <div style="color: #3498db; text-align: center;">
+                P1: <span id="p1-lap">0</span>/3
+                <div class="boost-indicator" id="p1-boost">BOOST: READY (Q)</div>
+            </div>
+            <div style="color: #f1c40f; text-align: center;">
+                P2: <span id="p2-lap">0</span>/3
+                <div class="boost-indicator" id="p2-boost">BOOST: READY (M)</div>
+            </div>
+        </div>
+
+        <div id="ui-overlay">
+            <h1 id="game-title">THE GREAT RACE</h1>
+            <div id="winner-display">PLAYER 1 WINS!</div>
+            <div class="controls-hint">
+                <div>
+                    <div style="color: #3498db;">PLAYER 1</div>
+                    <div class="key-box">WASD + Q (Boost)</div>
+                </div>
+                <div>
+                    <div style="color: #f1c40f;">PLAYER 2</div>
+                    <div class="key-box">ARROWS + M (Boost)</div>
+                </div>
+            </div>
+            <p style="margin-bottom: 20px;">Grass is solid. Collisions enabled. Race 3 laps!</p>
+            <button id="start-btn">START RACE</button>
+        </div>
+        <canvas id="raceCanvas" width="800" height="600"></canvas>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('raceCanvas');
+        const ctx = canvas.getContext('2d');
+        const startBtn = document.getElementById('start-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const uiOverlay = document.getElementById('ui-overlay');
+        const winnerDisplay = document.getElementById('winner-display');
+        const gameTitle = document.getElementById('game-title');
+        
+        const p1LapText = document.getElementById('p1-lap');
+        const p2LapText = document.getElementById('p2-lap');
+        const p1BoostText = document.getElementById('p1-boost');
+        const p2BoostText = document.getElementById('p2-boost');
+
+        let gameRunning = false;
+        const totalLaps = 3;
+
+        const keys = {};
+        window.addEventListener('keydown', e => keys[e.code] = true);
+        window.addEventListener('keyup', e => keys[e.code] = false);
+
+        class Car {
+            constructor(x, y, color, controls, startAngle) {
+                this.initialPos = {x, y, angle: startAngle};
+                this.reset();
+                this.color = color;
+                this.controls = controls;
+                this.width = 24;
+                this.height = 12;
+                this.radius = 10;
+            }
+
+            reset() {
+                this.x = this.initialPos.x;
+                this.y = this.initialPos.y;
+                this.angle = this.initialPos.angle;
+                this.speed = 0;
+                this.acceleration = 0.22;
+                this.friction = 0.95;
+                this.turnSpeed = 0.06;
+                this.maxSpeed = 5.5;
+                this.laps = 0;
+                this.passedCheckpoint = false;
+                this.boostActive = false;
+                this.boostTimer = 0;
+                this.boostCooldown = 0;
+            }
+
+            update() {
+                // Boost Handling
+                if (keys[this.controls.boost] && this.boostCooldown <= 0 && !this.boostActive) {
+                    this.boostActive = true;
+                    this.boostTimer = 30;
+                    this.boostCooldown = 180;
+                }
+
+                let currentMax = this.maxSpeed;
+                let currentAccel = this.acceleration;
+
+                if (this.boostActive) {
+                    currentMax *= 1.8;
+                    currentAccel *= 2;
+                    this.boostTimer--;
+                    if (this.boostTimer <= 0) this.boostActive = false;
+                }
+                if (this.boostCooldown > 0) this.boostCooldown--;
+
+                // Movement
+                if (keys[this.controls.up]) this.speed += currentAccel;
+                if (keys[this.controls.down]) this.speed -= currentAccel;
+
+                if (Math.abs(this.speed) > 0.1) {
+                    const direction = this.speed > 0 ? 1 : -1;
+                    if (keys[this.controls.left]) this.angle -= this.turnSpeed * direction;
+                    if (keys[this.controls.right]) this.angle += this.turnSpeed * direction;
+                }
+
+                this.speed *= this.friction;
+                if (this.speed > currentMax) this.speed = currentMax;
+                if (this.speed < -currentMax/2) this.speed = -currentMax/2;
+
+                const nextX = this.x + Math.cos(this.angle) * this.speed;
+                const nextY = this.y + Math.sin(this.angle) * this.speed;
+
+                // Wall Collision
+                const pixel = ctx.getImageData(nextX, nextY, 1, 1).data;
+                const isGrass = (pixel[1] > 160 && pixel[0] < 100); 
+
+                if (isGrass || nextX < 10 || nextX > 790 || nextY < 10 || nextY > 590) {
+                    this.speed *= -0.6; 
+                } else {
+                    this.x = nextX;
+                    this.y = nextY;
+                }
+
+                // Lap System
+                if (this.y < 150 && this.x > 300 && this.x < 500) this.passedCheckpoint = true;
+                if (this.passedCheckpoint && this.x > 395 && this.x < 415 && this.y > 430) {
+                   this.laps++;
+                   this.passedCheckpoint = false;
+                   if (this.laps >= totalLaps) endGame(this.color === '#3498db' ? "PLAYER 1" : "PLAYER 2");
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.angle);
+                if (this.boostActive) {
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+                    ctx.fillRect(-this.width, -this.height/2, this.width, this.height);
+                }
+                ctx.fillStyle = this.color;
+                ctx.fillRect(-this.width/2, -this.height/2, this.width, this.height);
+                ctx.fillStyle = 'white';
+                ctx.fillRect(this.width/2 - 4, -this.height/2, 4, 3);
+                ctx.fillRect(this.width/2 - 4, this.height/2 - 3, 4, 3);
+                ctx.restore();
+            }
+        }
+
+        let p1 = new Car(650, 470, '#3498db', {up: 'KeyW', left: 'KeyA', right: 'KeyD', down: 'KeyS', boost: 'KeyQ'}, Math.PI);
+        let p2 = new Car(650, 520, '#f1c40f', {up: 'ArrowUp', left: 'ArrowLeft', right: 'ArrowRight', down: 'ArrowDown', boost: 'KeyM'}, Math.PI);
+
+        function checkCarCollision(c1, c2) {
+            const dx = c2.x - c1.x;
+            const dy = c2.y - c1.y;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+            if (dist < c1.radius + c2.radius) {
+                const angle = Math.atan2(dy, dx);
+                const overlap = (c1.radius + c2.radius) - dist;
+                c1.x -= Math.cos(angle) * overlap * 0.5;
+                c1.y -= Math.sin(angle) * overlap * 0.5;
+                c2.x += Math.cos(angle) * overlap * 0.5;
+                c2.y += Math.sin(angle) * overlap * 0.5;
+                let s = c1.speed;
+                c1.speed = c2.speed * 0.7;
+                c2.speed = s * 0.7;
+            }
+        }
+
+        function drawTrack() {
+            ctx.fillStyle = '#27ae60'; // Grass
+            ctx.fillRect(0,0,800,600);
+            ctx.strokeStyle = '#34495e'; // Road
+            ctx.lineWidth = 120;
+            ctx.lineJoin = 'round';
+            ctx.beginPath();
+            ctx.roundRect(100, 100, 600, 400, 110);
+            ctx.stroke();
+            ctx.fillStyle = '#27ae60'; // Inner Grass
+            ctx.beginPath();
+            ctx.roundRect(165, 165, 470, 270, 70);
+            ctx.fill();
+
+            // Arrows
+            const arrows = [[250,100,0], [550,100,0], [700,250,Math.PI/2], [700,350,Math.PI/2], 
+                            [550,500,Math.PI], [250,500,Math.PI], [100,350,-Math.PI/2], [100,250,-Math.PI/2]];
+            arrows.forEach(a => {
+                ctx.save();
+                ctx.translate(a[0], a[1]);
+                ctx.rotate(a[2]);
+                ctx.fillStyle = "rgba(255,255,255,0.3)";
+                ctx.beginPath();
+                ctx.moveTo(-10,-5); ctx.lineTo(5,-5); ctx.lineTo(5,-10); ctx.lineTo(15,0);
+                ctx.lineTo(5,10); ctx.lineTo(5,5); ctx.lineTo(-10,5); ctx.closePath();
+                ctx.fill();
+                ctx.restore();
+            });
+
+            // Finish Line
+            for(let i=0; i<10; i++) {
+                for(let j=0; j<2; j++) {
+                    ctx.fillStyle = (i+j)%2===0 ? 'white' : 'black';
+                    ctx.fillRect(400+(j*10), 440+(i*12), 10, 12);
+                }
+            }
+        }
+
+        function endGame(winner) {
+            gameRunning = false;
+            winnerDisplay.textContent = winner + " WINS!";
+            winnerDisplay.style.display = 'block';
+            gameTitle.style.display = 'none';
+            uiOverlay.style.display = 'flex';
+            startBtn.textContent = 'RESTART RACE';
+        }
+
+        function update() {
+            if (!gameRunning) return;
+            drawTrack();
+            p1.update();
+            p2.update();
+            checkCarCollision(p1, p2);
+
+            p1LapText.textContent = p1.laps;
+            p2LapText.textContent = p2.laps;
+            p1BoostText.textContent = p1.boostCooldown <= 0 ? "BOOST: READY (Q)" : "BOOST: CHARGING...";
+            p2BoostText.textContent = p2.boostCooldown <= 0 ? "BOOST: READY (M)" : "BOOST: CHARGING...";
+            
+            p1.draw();
+            p2.draw();
+            requestAnimationFrame(update);
+        }
+
+        startBtn.addEventListener('click', () => {
+            p1.reset(); p2.reset();
+            uiOverlay.style.display = 'none';
+            gameRunning = true;
+            update();
+        });
+
+        resetBtn.addEventListener('click', () => {
+            p1.reset(); p2.reset();
+            if(!gameRunning) {
+                uiOverlay.style.display = 'none';
+                gameRunning = true;
+                update();
+            }
+        });
+
+        drawTrack();
+    </script>
+</body>
+</html>

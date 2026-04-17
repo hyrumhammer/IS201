@@ -1,0 +1,352 @@
+<style>
+  @import url('https://fonts.googleapis.com/css?family=Raleway:100,300,400,600,700&family=Lora:400,400i,700');
+
+  .resume-wrap {
+    font-family: 'Raleway', sans-serif;
+    background: #f2ede8;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+  }
+
+  .resume-header {
+    background: #e8e0d5;
+    text-align: center;
+    padding: 3.5rem 1rem 2.5rem;
+    border-bottom: 3px solid #c4b8a8;
+  }
+
+  .resume-header .upper {
+    font-family: 'Raleway', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: #8a7d6e;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .resume-header .name {
+    font-family: 'Lora', serif;
+    font-size: 44px;
+    font-weight: 400;
+    color: #3a342d;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .resume-header .title-tag {
+    font-family: 'Raleway', sans-serif;
+    font-size: 11px;
+    font-weight: 300;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #9a8e80;
+  }
+
+  .resume-nav {
+    background: #ddd5c8;
+    display: flex;
+    justify-content: center;
+    border-bottom: 1px solid #c4b8a8;
+  }
+
+  .resume-nav a {
+    font-family: 'Raleway', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #7a6e62;
+    text-decoration: none;
+    padding: 13px 28px;
+    border-right: 1px solid #c4b8a8;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .resume-nav a:last-child { border-right: none; }
+  .resume-nav a:hover { background: #cfc8bd; color: #3a342d; }
+
+  .resume-body {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 4rem;
+  }
+
+  .section-block {
+    background: #faf8f5;
+    border: 1px solid #d8d0c6;
+    border-radius: 16px;
+    box-shadow: 0 4px 18px rgba(90, 75, 60, 0.09), 0 1px 4px rgba(90, 75, 60, 0.06);
+    padding: 2rem 2.2rem;
+    margin-bottom: 2rem;
+  }
+
+  .section-label-upper {
+    font-family: 'Raleway', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: #9a8e80;
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  .section-label-lower {
+    font-family: 'Lora', serif;
+    font-size: 26px;
+    font-weight: 400;
+    color: #3a342d;
+    display: block;
+    margin-bottom: 1.2rem;
+    border-bottom: 1px solid #d8d0c6;
+    padding-bottom: 0.7rem;
+  }
+
+  .contact-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 36px;
+    font-size: 14px;
+    color: #5a5048;
+    font-family: 'Raleway', sans-serif;
+  }
+
+  .contact-row span { display: flex; align-items: center; gap: 7px; }
+  .contact-label {
+    font-weight: 700;
+    font-size: 9px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: #9a8e80;
+  }
+
+  .summary-text {
+    font-family: 'Lora', serif;
+    font-size: 15px;
+    line-height: 1.9;
+    color: #5a5048;
+    font-style: italic;
+  }
+
+  .exp-entry { margin-bottom: 1.6rem; }
+  .exp-entry:last-child { margin-bottom: 0; }
+
+  .exp-role {
+    font-family: 'Raleway', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: #3a342d;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .exp-company {
+    font-family: 'Lora', serif;
+    font-size: 14px;
+    font-style: italic;
+    color: #8a7d6e;
+    margin: 2px 0 2px;
+  }
+
+  .exp-dates {
+    font-family: 'Raleway', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #b0a496;
+    margin-bottom: 7px;
+  }
+
+  .exp-desc {
+    font-family: 'Raleway', sans-serif;
+    font-size: 14px;
+    line-height: 1.75;
+    color: #6a6058;
+  }
+
+  .exp-divider {
+    border: none;
+    border-top: 1px solid #e0d8ce;
+    margin: 1.4rem 0;
+  }
+
+  .skills-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+  }
+
+  .skill-pill {
+    background: #e8e0d5;
+    color: #5a5048;
+    border: 1px solid #c8bfb4;
+    font-family: 'Raleway', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 6px 16px;
+    border-radius: 999px;
+  }
+
+  .edu-deg {
+    font-family: 'Raleway', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: #3a342d;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  .edu-school {
+    font-family: 'Lora', serif;
+    font-size: 14px;
+    font-style: italic;
+    color: #8a7d6e;
+    margin: 2px 0 1px;
+  }
+
+  .edu-year {
+    font-family: 'Raleway', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #b0a496;
+  }
+
+  .resume-footer {
+    background: #e0d8ce;
+    border-top: 1px solid #c4b8a8;
+    text-align: center;
+    padding: 1.4rem;
+    font-family: 'Raleway', sans-serif;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #9a8e80;
+  }
+
+  .accent-rule {
+    width: 48px;
+    height: 2px;
+    background: #c4b8a8;
+    margin: 0 auto 1.8rem;
+    border: none;
+  }
+</style>
+
+<div class="resume-wrap">
+  <header class="resume-header">
+    <span class="upper">Resume</span>
+    <span class="name">Hyrum Hammer</span>
+    <hr class="accent-rule">
+    <span class="title-tag">Videographer &nbsp;·&nbsp; Editor</span>
+  </header>
+
+  <!-- Updated nav: links point to section IDs -->
+  <nav class="resume-nav">
+    <a href="index.html">Home</a>
+    <a href="#contact">Contact</a>
+    <a href="#experience">Experience</a>
+    <a href="#skills">Skills</a>
+    <a href="#education">Education</a>
+  </nav>
+
+  <div class="resume-body">
+
+    <!-- Contact section with id="contact" -->
+    <div class="section-block" id="contact">
+      <span class="section-label-upper">Get In Touch</span>
+      <span class="section-label-lower">Contact</span>
+      <div class="contact-row">
+        <span><span class="contact-label">Email</span> email@email.com</span>
+        <span><span class="contact-label">Phone</span> (000)000-0000)</span>
+        <span><span class="contact-label">Location</span> Provo, UT</span>
+        <span><span class="contact-label">LinkedIn</span> linkedin.com</span>
+      </div>
+    </div>
+
+    <!-- About (unchanged, no nav link) -->
+    <div class="section-block">
+      <span class="section-label-upper">A Few Words</span>
+      <span class="section-label-lower">About Me</span>
+      <p class="summary-text">
+        I am a dedicated videographer and DaVinci Resolve editor passionate about transforming raw moments into compelling, polished stories. By combining a cinematic eye behind the camera with advanced color grading and precision editing in post-production, I bring a cohesive, high-quality vision to every project.
+      </p>
+    </div>
+
+    <!-- Experience section with id="experience" -->
+    <div class="section-block" id="experience">
+      <span class="section-label-upper">Where I've Been</span>
+      <span class="section-label-lower">Experience</span>
+
+      <div class="exp-entry">
+        <div class="exp-role">Videographer & Editor</div>
+  <div class="exp-company">[Videography Company Name]</div>
+  <div class="exp-dates">[Year] — Present</div>
+  <div class="exp-desc">Managed end-to-end video production for large clients, from shooting on location to advanced post-production. Crafted visually striking narratives and polished final cuts utilizing DaVinci Resolve for precision editing and color grading.</div>
+</div>
+<hr class="exp-divider">
+<div class="exp-entry">
+  <div class="exp-role">Specialist</div>
+  <div class="exp-company">Apple Store</div>
+  <div class="exp-dates">[Year] — [Year]</div>
+  <div class="exp-desc">Delivered exceptional customer experiences by troubleshooting technical issues and providing tailored product recommendations. Educated users on hardware and software solutions in a fast-paced, highly collaborative environment.</div>
+</div>
+<hr class="exp-divider">
+<div class="exp-entry">
+  <div class="exp-role">Sales Representative</div>
+  <div class="exp-company">[Sales Company Name]</div>
+  <div class="exp-dates">[Year] — [Year]</div>
+  <div class="exp-desc">Drove revenue growth by identifying customer needs and effectively communicating product value propositions. Built and maintained strong client relationships while consistently meeting or exceeding performance targets.</div>
+      </div>
+    </div>
+
+    <!-- Skills section with id="skills" -->
+    <div class="section-block" id="skills">
+      <span class="section-label-upper">What I Bring</span>
+      <span class="section-label-lower">Skills</span>
+      <div class="skills-grid">
+        <span class="skill-pill">DaVinci Resolve</span>
+<span class="skill-pill">Color Grading</span>
+<span class="skill-pill">Cinematography</span>
+<span class="skill-pill">Camera Operations</span>
+<span class="skill-pill">Lighting & Composition</span>
+<span class="skill-pill">Cross-Functional Collaboration</span>
+<span class="skill-pill">Creative Problem Solving</span>
+<span class="skill-pill">Adaptive Learning</span>
+<span class="skill-pill">Team Leadership</span>
+<span class="skill-pill">Client Relations</span>
+<span class="skill-pill">Technical Troubleshooting</span>
+      </div>
+    </div>
+
+    <!-- Education section with id="education" -->
+    <div class="section-block" id="education">
+      <span class="section-label-upper">Foundations</span>
+      <span class="section-label-lower">Education</span>
+      <div class="edu-entry">
+  <div class="edu-deg">Masters School of Accountancy</div>
+  <div class="edu-school">Brigham Young University</div>
+  <div class="edu-year">Expected 2029</div>
+</div>
+<hr class="exp-divider">
+<div class="edu-entry" style="margin-bottom:0">
+  <div class="edu-deg">High School Diploma</div>
+  <div class="edu-school">[Name of High School]</div>
+  <div class="edu-year">Graduated 2022</div>
+</div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="resume-footer">
+    &copy; 2026 Hyrum Hammer &nbsp;·&nbsp; All Rights Reserved
+  </footer>
+</div>
